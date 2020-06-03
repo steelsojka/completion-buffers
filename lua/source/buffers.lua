@@ -49,15 +49,13 @@ function M.get_completion_items(words, prefix, kind)
   local complete_items = {}
 
   for _,word in ipairs(words) do
-    if word ~= prefix then
-      match.matching(complete_items, prefix, {
-        word = word;
-        kind = kind;
-        icase = 1;
-        dup = 0;
-        empty = 0;
-      })
-    end
+    match.matching(complete_items, prefix, {
+      word = word;
+      kind = kind;
+      icase = 1;
+      dup = 0;
+      empty = 0;
+    })
   end
 
   return complete_items
