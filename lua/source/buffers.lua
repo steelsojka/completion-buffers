@@ -2,6 +2,17 @@ local M = {}
 local api = vim.api
 local match = require "completion.matching"
 
+M.buffer_to_words = {}
+
+function M.caching_buffers_word()
+  local bufs = vim.fn.getbufinfo({ buflisted = 1 })
+  for _,buf in ipairs(bufs) do
+    if not M.buffer_to_words[buf.bufnr] then
+      M.buffer_to_words[buf.bufnr] = M.get_words(buf.bufnr)
+    end
+ end
+end
+
 local function get_option(bufnr, name, default)
   local success, value = pcall(function() return api.nvim_buf_get_var(bufnr, name) end)
 
@@ -35,11 +46,14 @@ function M.get_words(bufnr)
 end
 
 function M.get_all_buffer_words()
+  -- only need to refresh current buffers word
+  local current_buf = vim.fn.bufnr()
+  M.buffer_to_words[current_buf] = M.get_words(current_buf)
   local bufs = vim.fn.getbufinfo({ buflisted = 1 })
   local result = {}
 
   for _,buf in ipairs(bufs) do
-    result = vim.tbl_extend("keep", M.get_words(buf.bufnr), result)
+    result = vim.tbl_extend("keep", M.buffer_to_words[buf.bufnr], result)
   end
 
   return result
