@@ -6,6 +6,7 @@ M.buffer_to_words = {}
 
 function M.caching_buffers_word()
   local bufs = vim.fn.getbufinfo({ buflisted = 1 })
+
   for _,buf in ipairs(bufs) do
     if not M.buffer_to_words[buf.bufnr] then
       M.buffer_to_words[buf.bufnr] = M.get_words(buf.bufnr)
@@ -45,12 +46,19 @@ function M.get_words(bufnr)
   return words
 end
 
+function M.unload_buffer_words(bufnr)
+  if M.buffer_to_words[bufnr] then
+    M.buffer_to_words[bufnr] = nil
+  end
+end
+
 function M.get_all_buffer_words()
-  -- only need to refresh current buffers word
   local current_buf = vim.fn.bufnr()
-  M.buffer_to_words[current_buf] = M.get_words(current_buf)
   local bufs = vim.fn.getbufinfo({ buflisted = 1 })
   local result = {}
+
+  -- only need to refresh current buffers word
+  M.buffer_to_words[current_buf] = M.get_words(current_buf)
 
   for _,buf in ipairs(bufs) do
     result = vim.tbl_extend("keep", M.buffer_to_words[buf.bufnr], result)
