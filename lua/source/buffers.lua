@@ -47,11 +47,12 @@ end
 
 function M.get_completion_items(words, prefix, kind)
   local complete_items = {}
+  local customized_labels = vim.g.completion_customize_lsp_label
 
   for _,word in ipairs(words) do
     match.matching(complete_items, prefix, {
       word = word;
-      kind = kind;
+      kind = customized_labels[kind] or kind;
       icase = 1;
       dup = 0;
       empty = 0;
