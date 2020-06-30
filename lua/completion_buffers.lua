@@ -1,7 +1,7 @@
 local M = {}
 local api = vim.api
 local completion = require "completion"
-local buffers = require "source.buffers"
+local buffers = require "completion_buffers.source"
 
 function M.add_sources()
   completion.addCompletionSource("buffers", {
@@ -13,9 +13,9 @@ function M.add_sources()
 
   -- Register autocommands for caching buffer words
   api.nvim_command("augroup RefreshBufferWords")
-    api.nvim_command("autocmd! *")
-    api.nvim_command("autocmd BufEnter * lua require 'completion_buffers'.refresh_buffers_word()")
-    api.nvim_command([[autocmd BufUnload * call luaeval('require "completion_buffers".unload_buffer_words(_A)', expand('<abuf>'))]])
+  api.nvim_command("autocmd! *")
+  api.nvim_command("autocmd BufEnter * lua require 'completion_buffers'.refresh_buffers_word()")
+  api.nvim_command([[autocmd BufUnload * call luaeval('require "completion_buffers".unload_buffer_words(_A)', expand('<abuf>'))]])
   api.nvim_command("augroup end")
 end
 
