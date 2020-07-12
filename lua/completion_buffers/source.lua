@@ -54,7 +54,7 @@ function M.unload_buffer_words(bufnr)
 end
 
 function M.get_all_buffer_words()
-  local current_buf = vim.fn.bufnr()
+  local current_buf = api.nvim_get_current_buf()
   local bufs = vim.fn.getbufinfo({ buflisted = 1 })
   local result = {}
 
@@ -92,7 +92,7 @@ function M.get_buffers_completion_items(prefix)
 end
 
 function M.get_buffer_completion_items(prefix)
-  return M.get_completion_items(vim.tbl_keys(M.get_words(vim.fn.bufnr())), prefix, "Buffer")
+  return M.get_completion_items(vim.tbl_keys(M.get_words(api.nvim_get_current_buf())), prefix, "Buffer")
 end
 
 return M
