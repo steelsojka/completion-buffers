@@ -33,7 +33,8 @@ end
 function M.get_words(bufnr)
   local separator = get_option(bufnr, "completion_word_separator", "[^a-zA-Z0-9\\-_]")
   local min_length = get_option(bufnr, "completion_word_min_length", 3)
-  local lines = api.nvim_buf_get_lines(bufnr, 0, -1, true)
+  -- safeguard invalid bufnr
+  local lines = bufnr>=0 and api.nvim_buf_get_lines(bufnr, 0, -1, true) or {}
   local parts = vim.fn.split(vim.fn.join(lines), separator)
   local words = {}
 
@@ -53,7 +54,7 @@ function M.unload_buffer_words(bufnr)
 end
 
 function M.get_all_buffer_words()
-  local current_buf = vim.fn.bufnr()
+  local current_buf = api.nvim_get_current_buf()
   local bufs = vim.fn.getbufinfo({ buflisted = 1 })
   local result = {}
 
@@ -91,7 +92,7 @@ function M.get_buffers_completion_items(prefix)
 end
 
 function M.get_buffer_completion_items(prefix)
-  return M.get_completion_items(vim.tbl_keys(M.get_words(vim.fn.bufnr('.'))), prefix, "Buffer")
+  return M.get_completion_items(vim.tbl_keys(M.get_words(api.nvim_get_current_buf())), prefix, "Buffer")
 end
 
 return M
