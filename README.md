@@ -35,5 +35,6 @@ completion_chain_complete_list = {
 
 - `g:completion_word_separator` - Matcher or string to split words on. Defaults to `[^a-zA-Z0-9\-_]`.
 - `g:completion_word_min_length` - Matcher or string to split words on. Defaults to 3.
+- `g:completion_word_ignored_ft` - A list of filetypes that should be ignored from caching/gathering words. EX logfiles.
 
 Note these can be specified as buffer variables as well.

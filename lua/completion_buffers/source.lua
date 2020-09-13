@@ -4,15 +4,7 @@ local match = require "completion.matching"
 
 M.buffer_to_words = {}
 
-function M.caching_buffers_word()
-  local bufs = vim.fn.getbufinfo({ buflisted = 1 })
-
-  for _,buf in ipairs(bufs) do
-    if not M.buffer_to_words[buf.bufnr] then
-      M.buffer_to_words[buf.bufnr] = M.get_words(buf.bufnr)
-    end
- end
-end
+local ignored_fts = nil
 
 local function get_option(bufnr, name, default)
   local success, value = pcall(function() return api.nvim_buf_get_var(bufnr, name) end)
@@ -29,6 +21,33 @@ local function get_option(bufnr, name, default)
 
   return default
 end
+
+local function is_ignored_ft(ft, bufnr)
+  if not ignored_fts then
+    ignored_fts = {}
+
+    local ignored_list = get_option(bufnr, "completion_word_ignored_ft", {})
+
+    for _, ignored_ft in ipairs(ignored_list) do
+      ignored_fts[ignored_ft] = true
+    end
+  end
+
+  return ignored_fts[ft]
+end
+
+function M.caching_buffers_word()
+  local bufs = vim.fn.getbufinfo({ buflisted = 1 })
+
+  for _, buf in ipairs(bufs) do
+    local ft = api.nvim_buf_get_option(buf.bufnr, 'ft')
+
+    if not is_ignored_ft(ft, buf.bufnr) and not M.buffer_to_words[buf.bufnr] then
+      M.buffer_to_words[buf.bufnr] = M.get_words(buf.bufnr)
+    end
+  end
+end
+
 
 function M.get_words(bufnr)
   local separator = get_option(bufnr, "completion_word_separator", "[^a-zA-Z0-9\\-_]")
@@ -62,7 +81,9 @@ function M.get_all_buffer_words()
   M.buffer_to_words[current_buf] = M.get_words(current_buf)
 
   for _,buf in ipairs(bufs) do
-    result = vim.tbl_extend("keep", M.buffer_to_words[buf.bufnr], result)
+    if M.buffer_to_words[buf.bufnr] then
+      result = vim.tbl_extend("keep", M.buffer_to_words[buf.bufnr], result)
+    end
   end
 
   return result
