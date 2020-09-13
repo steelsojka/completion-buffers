@@ -23,12 +23,12 @@ Setup
 The source is automatically registered. You just need to add the source to your completion configuration.
 
 ```
-completion_chain_complete_list = {
-  { complete_items = { 'lsp' } },
-  { complete_items = { 'buffers' } },
-  { mode = { '<c-p>' } },
-  { mode = { '<c-n>' } }
-}
+let g:completion_chain_complete_list = [ 
+  \{ complete_items = ['lsp', 'snippet'] },
+  \{ complete_items = ['buffers'] },
+  \{ mode = '<c-p>' },
+  \{ mode = '<c-n>' }
+\ ]
 ```
 
 ### Configuration
