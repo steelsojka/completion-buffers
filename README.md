@@ -20,14 +20,18 @@ Install
 Setup
 -----
 
-The source is automatically registered. You just need to add the source to your completion configuration.
+The source is automatically registered. You just need to add the source to your completion configuration. See the detail in [wiki][].
 
-```
-completion_chain_complete_list = {
-  { complete_items = { 'lsp' } },
-  { complete_items = { 'buffers' } },
-  { mode = { '<c-p>' } },
-  { mode = { '<c-n>' } }
+[wiki]: https://github.com/nvim-lua/completion-nvim/wiki/chain-complete-support
+
+```lua
+vim.g.completion_chain_complete_list = {
+  default = {
+    { complete_items = { 'lsp' } },
+    { complete_items = { 'buffers' } },
+    { mode = { '<c-p>' } },
+    { mode = { '<c-n>' } }
+  },
 }
 ```
 
